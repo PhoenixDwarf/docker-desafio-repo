@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es-LA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Usuarios CRUD</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+      }
+      form {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Usuarios</h1>
+
+    <form id="createForm">
+      <h3>Crear usuario</h3>
+      <input name="nombre" placeholder="Nombre" required />
+      <input name="email" placeholder="Email" required />
+      <button type="submit">Crear</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="usuariosBody"></tbody>
+    </table>
+
+    <template id="rowTpl">
+      <tr>
+        <td class="id"></td>
+        <td class="nombre"></td>
+        <td class="email"></td>
+        <td>
+          <button class="edit">Editar</button>
+          <button class="delete">Eliminar</button>
+        </td>
+      </tr>
+    </template>
+
+    <script>
+      const api = "/usuarios";
+
+      async function fetchUsuarios() {
+        const res = await fetch(api);
+        const data = await res.json();
+        const tbody = document.getElementById("usuariosBody");
+        tbody.innerHTML = "";
+        for (const u of data) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${u.id}</td><td>${u.nombre}</td><td>${u.email}</td><td><button class="edit">Editar</button> <button class="delete">Eliminar</button></td>`;
+          tr.querySelector(".delete").addEventListener("click", async () => {
+            if (!confirm("Eliminar usuario?")) return;
+            await fetch(`${api}/${u.id}`, { method: "DELETE" });
+            fetchUsuarios();
+          });
+          tr.querySelector(".edit").addEventListener("click", () =>
+            openEdit(u)
+          );
+          tbody.appendChild(tr);
+        }
+      }
+
+      document
+        .getElementById("createForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const form = e.target;
+          const nombre = form.nombre.value.trim();
+          const email = form.email.value.trim();
+          await fetch(api, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nombre, email }),
+          });
+          form.reset();
+          fetchUsuarios();
+        });
+
+      function openEdit(user) {
+        const nombre = prompt("Nombre", user.nombre);
+        if (nombre === null) return;
+        const email = prompt("Email", user.email);
+        if (email === null) return;
+        fetch(`${api}/${user.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre, email }),
+        }).then(() => fetchUsuarios());
+      }
+
+      fetchUsuarios();
+    </script>
+  </body>
+</html>
