@@ -1,5 +1,8 @@
 > Recomiendo enormemente abrir este documento desde visual studio code o cualquier editor que soporte markdown para una mejor experiencia de lectura.
 
+> **URL del repositorio con la solución completa**:  
+> [https://github.com/PhoenixDwarf/docker-desafio-repo.git](https://github.com/PhoenixDwarf/docker-desafio-repo.git)
+
 **Objetivo**: Ampliar la API para incluir operaciones CRUD sobre una entidad simple (por ejemplo, usuarios) y conectar con una interfaz web básica.
 
 ## Parte 1: Agregar rutas CRUD en la API
@@ -319,7 +322,9 @@ app.listen(port, () => {
         "email": "email@prueba.com"
     }
     ```
+
     Response:
+
     ```json
     {
         "id": 5,
@@ -327,20 +332,25 @@ app.listen(port, () => {
         "email": "email@prueba.com"
     }
     ```
+
 - PUT http://localhost:3000/usuarios/5
+
     ```json
     {
         "nombre": "Edwin Prueba Actualizado",
         "email": "email@prueba.com"
     }
     ```
+
     Response:
+
     ```json
     {
         "id": 5,
         "nombre": "Edwin Prueba Actualizado",
         "email": "email@prueba.com"
     }
+    ```
 
 - DELETE http://localhost:3000/usuarios/5
 
